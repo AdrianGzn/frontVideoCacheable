@@ -17,7 +17,7 @@ function App() {
           await cache.put(videoUrl, response.clone());
           console.log("Video guardado en el foking caché");
         } else {
-          console.log("Esta mmda no es el video");
+          console.log("Esta mmda no es un video");
         }
       } catch (error) {
         console.log("Falló el try");
