@@ -2,52 +2,55 @@ import "./App.css";
 import ReactPlayer from "react-player";
 import { useState, useEffect } from "react";
 
-const cacheName = "video-cache";
-const videoUrl = "https://www.youtube.com/watch?v=MxjCLqdk4G4";
-
 function App() {
-  const [videoSrc, setVideoSrc] = useState(videoUrl);
+  const [data, setData] = useState([])
+  const [url, setUrl] = useState("")
+  const baseUrl = "http://localhost:3000/videos/"
 
   useEffect(() => {
-    const obtenerElVideo = async () => {
-      try {
-        const cache = await caches.open(cacheName);
-        const response = await fetch(videoUrl);
-        if (response.ok) {
-          await cache.put(videoUrl, response.clone());
-          console.log("Video guardado en el foking caché");
-        } else {
-          console.log("Esta mmda no es un video");
-        }
-      } catch (error) {
-        console.log("Falló el try");
-      }
-    };
+    fetch("http://localhost:3000/api/videos", {
+      method: "GET",
 
-    obtenerElVideo();
-  }, []);
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((response) => response.json()
+      )
+      .then((data) => {
+        console.log(data.videos)
+        setData(data.videos)
+      })
+      .catch((err) => {
+        console.log("error:", err)
+      })
+      .finally((final) => {
+        console.log(final)
+      })
+  }, [])
 
-  const ReproducirVideo = async () => {
-    try {
-      const cache = await caches.open(cacheName);
-      const response = await cache.match(videoUrl);
-      if (response) {
-        const blob = await response.blob();
-        const objectURL = URL.createObjectURL(blob);  //aquí se 'instancia'
-        setVideoSrc(objectURL);
-        console.log("Video desde la caché");
-      } else {
-        console.log("No hay videos en el caché wey");
-      }
-    } catch (error) {
-      console.log("Error en el caché:", error);
-    }
-  };
+  const getDirection = (urlVideo) => {
+    const url = baseUrl + urlVideo
+    console.log(url)
+    setUrl(url)
+  }
 
   return (
     <div className="border-2 border-black p-5">
-      <ReactPlayer url={videoSrc} controls loop className="border-2 border-white" />
-      <button className="m-2" onClick={ReproducirVideo}>Cargar desde la memoria</button>
+      {
+        data.map((video, id) => (
+          <li key={id}>
+            <button onClick={(() => getDirection(video))}>
+              Reproducir video
+            </button>
+          </li>
+        ))
+      }
+
+      {
+        url && (
+          <ReactPlayer url={url} controls loop className="border-2 border-white" />
+        )
+      }
+
     </div>
   );
 }
