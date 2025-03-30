@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./SeeVideo.css";
-import { json } from "stream/consumers";
 import { useNavigate } from "react-router-dom";
 
 function LogIn() {
@@ -9,7 +8,7 @@ function LogIn() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!username || !password) {
@@ -36,7 +35,7 @@ function LogIn() {
             localStorage.setItem("token", JSON.parse(data.token))
             setError(""); 
         } catch (err) {
-            setError((err as Error).message);
+            setError((err).message);
         }
     };
 
