@@ -1,12 +1,19 @@
-import "./App.css";
 import ReactPlayer from "react-player";
 import { useState, useEffect } from "react";
 
 const cacheName = "video-cache";
 const videoUrl = "https://www.youtube.com/watch?v=MxjCLqdk4G4";
 
+const suggestedVideos = [
+  { id: 1, title: "La Casa de Papel", thumbnail: "./public/Bob_Esponja.jpg" },
+  { id: 2, title: "Dark", thumbnail: "./public/pinguinos.jpg" },
+  { id: 3, title: "Narcos", thumbnail: "./public/río.jpg" },
+  { id: 4, title: "Squid Game", thumbnail: "./public/Secreto.jpg" }
+];
+
 function App() {
   const [videoSrc, setVideoSrc] = useState(videoUrl);
+  const [isCached, setIsCached] = useState(false);
 
   useEffect(() => {
     const obtenerElVideo = async () => {
@@ -15,12 +22,12 @@ function App() {
         const response = await fetch(videoUrl);
         if (response.ok) {
           await cache.put(videoUrl, response.clone());
-          console.log("Video guardado en el foking caché");
+          console.log("Video guardado en caché");
         } else {
-          console.log("Esta mmda no es un video");
+          console.log("No se pudo obtener el video");
         }
       } catch (error) {
-        console.log("Falló el try");
+        console.log("Error al guardar en caché:", error);
       }
     };
 
@@ -33,11 +40,13 @@ function App() {
       const response = await cache.match(videoUrl);
       if (response) {
         const blob = await response.blob();
-        const objectURL = URL.createObjectURL(blob);  //aquí se 'instancia'
+        const objectURL = URL.createObjectURL(blob);
         setVideoSrc(objectURL);
+        setIsCached(true);
         console.log("Video desde la caché");
       } else {
-        console.log("No hay videos en el caché wey");
+        console.log("No hay videos en el caché");
+        setIsCached(false);
       }
     } catch (error) {
       console.log("Error en el caché:", error);
@@ -45,9 +54,76 @@ function App() {
   };
 
   return (
-    <div className="border-2 border-black p-5">
-      <ReactPlayer url={videoSrc} controls loop className="border-2 border-white" />
-      <button className="m-2" onClick={ReproducirVideo}>Cargar desde la memoria</button>
+    <div className="min-h-screen bg-gray-900 text-white p-8 flex flex-col items-center">
+      <div className="w-full max-w-6xl bg-gray-800 rounded-xl overflow-hidden shadow-2xl">
+        <div className="relative w-full aspect-video bg-black">
+          <ReactPlayer
+            url={videoSrc}
+            controls
+            loop
+            width="100%"
+            height="100%"
+            className="absolute top-0 left-0"
+            playing
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+        </div>
+
+        <div className="p-6 flex flex-col items-center space-y-6">
+          <button 
+            className={`px-6 py-3 rounded-lg font-bold text-lg transition-all duration-300 flex items-center space-x-2 ${
+              isCached 
+                ? 'bg-green-600 hover:bg-green-700 shadow-green-glow'
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+            onClick={ReproducirVideo}
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-6 w-6" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d={isCached ? "M5 13l4 4L19 7" : "M12 15l8-8m0 0h-6m6 0v6"} 
+              />
+            </svg>
+            <span>
+              {isCached ? 'Reproduciendo desde caché' : 'Cargar desde memoria'}
+            </span>
+          </button>
+        </div>
+
+        <div className="border-t border-gray-700 p-6">
+          <h3 className="text-xl font-bold mb-4">Sugerencias para ti</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {suggestedVideos.map((video) => (
+              <div 
+                key={video.id} 
+                className="bg-gray-700/50 hover:bg-gray-700 transition rounded-lg overflow-hidden cursor-pointer group"
+              >
+                <div className="aspect-video bg-gray-600/30 relative overflow-hidden">
+                  <img 
+                    src={video.thumbnail} 
+                    alt={video.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+                <div className="p-3">
+                  <h4 className="font-medium text-white group-hover:text-blue-400 transition-colors">
+                    {video.title}
+                  </h4>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
