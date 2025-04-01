@@ -55,7 +55,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8 flex flex-col items-center">
+      {/* Contenedor principal */}
       <div className="w-full max-w-6xl bg-gray-800 rounded-xl overflow-hidden shadow-2xl">
+        {/* Sección del reproductor */}
         <div className="relative w-full aspect-video bg-black">
           <ReactPlayer
             url={videoSrc}
@@ -69,6 +71,7 @@ function App() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
         </div>
 
+        {/* Controles debajo del video */}
         <div className="p-6 flex flex-col items-center space-y-6">
           <button 
             className={`px-6 py-3 rounded-lg font-bold text-lg transition-all duration-300 flex items-center space-x-2 ${
@@ -96,8 +99,21 @@ function App() {
               {isCached ? 'Reproduciendo desde caché' : 'Cargar desde memoria'}
             </span>
           </button>
+
+          {/* Sección de estado */}
+          <div className="w-full bg-gray-700/50 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Estado del caché:</span>
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                isCached ? 'bg-green-900 text-green-200' : 'bg-yellow-900 text-yellow-200'
+              }`}>
+                {isCached ? 'Disponible' : 'No disponible'}
+              </span>
+            </div>
+          </div>
         </div>
 
+        {/* Sección de sugerencias */}
         <div className="border-t border-gray-700 p-6">
           <h3 className="text-xl font-bold mb-4">Sugerencias para ti</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
