@@ -1,15 +1,15 @@
-import ReactPlayer from "react-player";
-import { useState, useEffect } from "react";
-import { Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import SeeVideo from "./pages/SeeVideo";
-const cacheName = "video-cache";
-const videoUrl = "https://www.youtube.com/watch?v=MxjCLqdk4G4";
-function App() {
+import LogIn from "./pages/LogIn";
 
+function App() {
   return (
-    <>
-    <SeeVideo/>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LogIn />} />
+        <Route path="/video" element={<SeeVideo />} />
+      </Routes>
+    </Router>
   );
 }
 

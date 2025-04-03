@@ -17,7 +17,7 @@ function LogIn() {
         }
 
         try {
-            const response = await fetch("http://44.214.207.98:3000/api/users/logIn", {
+            const response = await fetch("http://localhost:3000/api/users/logIn", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -31,7 +31,7 @@ function LogIn() {
 
             const data = await response.json();
             console.log("Login exitoso:", data.token);
-            navigate("/home")
+            navigate("/video")
             localStorage.setItem("token", JSON.parse(data.token))
             setError(""); 
         } catch (err) {
