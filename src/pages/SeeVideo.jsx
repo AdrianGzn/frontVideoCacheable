@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { videos } from "../data/videos";
 
 const cacheName = "video-cache";
-const apiUrl = "http://localhost:3000/api/videos";
+const apiUrl = "http://44.214.207.98:3000/api/videos";
 
 function SeeVideo() {
   const [videoSrc, setVideoSrc] = useState("");
@@ -74,7 +74,7 @@ function SeeVideo() {
             <p className="text-center text-red-400 p-6">{error}</p>
           ) : videoSrc ? (
             <ReactPlayer
-              url={"http://localhost:3000/videos/yt1z.net - The Avengers Los Vengadores - Tráiler Oficial - Doblado (720p).mp4"}
+              url={"http://44.214.207.98:3000/videos/yt1z.net - The Avengers Los Vengadores - Tráiler Oficial - Doblado (720p).mp4"}
               controls
               width="100%"
               height="100%"
