@@ -16,19 +16,24 @@ function SeeVideo() {
 
     const cacheVideo = async () => {
       try {
-        if (!("caches" in window)) {
-          throw new Error("Cache API no está disponible en este entorno.");
-        }
-
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error("No se pudo obtener la lista de videos");
+
         const videoList = await response.json();
 
         if (!Array.isArray(videoList.videos) || videoList.videos.length === 0) {
           throw new Error("La API no retornó videos");
         }
 
-        const videoUrl = videoList.videos[0]; // URL absoluta del video
+        const videoUrl = videoList.videos[0];
+
+        // Validación: solo si estamos en el navegador y soporta Cache API
+        if (typeof window === "undefined" || !("caches" in window)) {
+          console.warn("Cache API no disponible. Usando video directamente desde red.");
+          setVideoSrc(videoUrl);
+          return;
+        }
+
         const cache = await caches.open(cacheName);
         const cachedResponse = await cache.match(videoUrl);
 
@@ -51,7 +56,7 @@ function SeeVideo() {
         }
       } catch (err) {
         console.error(err);
-        setError(err.message || "Error al cargar el video");
+        setError("Error al cargar el video");
       } finally {
         setLoading(false);
       }
